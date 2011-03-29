@@ -106,13 +106,13 @@ class Dispatcher:
         if protoName == 'console':
             protoName = 'file' # alias
         implName = '%sWrapper' % protoName.capitalize() # e.g. TcpWrapper
-        modName = 'irgCom.%s' % implName # e.g. irgCom.tcpWrapper
+        modName = 'geocamPycroCom.%s' % implName # e.g. geocamPycroCom.tcpWrapper
         try:
             __import__(modName)
         except ImportError:
             raise BadEndpointError("can't load protocol", endpoint)
         mod = sys.modules[modName]
-        cls = getattr(mod, implName) # e.g. irgCom.TcpWrapper.TcpWrapper
+        cls = getattr(mod, implName) # e.g. geocamPycroCom.TcpWrapper.TcpWrapper
         return cls(self, protoName)
 
     def _splitProtocol(self, endpoint):
