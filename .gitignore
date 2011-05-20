@@ -1,4 +1,10 @@
-.svn
 *.pyc
+*DS_Store
+*.egg-info
 *~
-
+/example/dev.db
+/docs/_build/
+/pip-log.txt
+/static/js/*.r*.js
+/static/css/*.r*.css
+/geocamPycroCom/build

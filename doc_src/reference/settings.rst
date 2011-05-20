@@ -1,4 +1,6 @@
-Fill me in
+
+Settings
+========
 
 | __BEGIN_LICENSE__
 | Copyright (C) 2008-2010 United States Government as represented by

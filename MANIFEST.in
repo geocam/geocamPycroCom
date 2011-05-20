@@ -1,0 +1,9 @@
+recursive-include doc_src *
+recursive-include docs *
+
+recursive-include geocamPycroCom/media *
+recursive-include geocamPycroCom/templates *
+
+include LICENSE
+include README.rst
+include *.txt
