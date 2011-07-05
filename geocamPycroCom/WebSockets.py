@@ -9,9 +9,9 @@ import logging
 from threading import Thread
 import re
 import hashlib
-from JsonRpc2Validation import JsonRpc2Keys
-from JsonRpc2Validation import JsonRpc2Validator
-from JsonRpc2Validation import JsonRpc2ComplianceException
+from geocamUtil.JsonRpc2Validation import JsonRpc2Keys
+from geocamUtil.JsonRpc2Validation import JsonRpc2Validator
+from geocamUtil.JsonRpc2Validation import JsonRpc2ComplianceException
 
 class Resource(Thread):
     def __init__(self, server, rname):
