@@ -6,12 +6,22 @@
 
 import sys
 import traceback
+import errno
+import time
 
 def printTraceback():
     errClass, errObj, errTB = sys.exc_info()[:3]
-    traceback.print_tb(errTB)
-    print >>sys.stderr, '%s.%s: %s' % (errClass.__module__,
-                                       errClass.__name__,
-                                       str(errObj))
+    while 1:
+        try:
+            traceback.print_tb(errTB)
+            print >>sys.stderr, '%s.%s: %s' % (errClass.__module__,
+                                               errClass.__name__,
+                                               str(errObj))
+            break
+        except IOError, exc:
+            if exc.args[0] == errno.EAGAIN:
+                time.sleep(0.1)
+            else:
+                raise
     if isinstance(errObj, KeyboardInterrupt):
         sys.exit(0)
