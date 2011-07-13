@@ -5,10 +5,12 @@
 # __END_LICENSE__
 
 import sys, os, socket
-import asynchat
 from TcpBaseSocket import TcpBaseSocket
 from TcpStreamSocket import TcpStreamSocket
 from printTraceback import printTraceback
+
+from geocamPycroCom import asynchat # patched version
+
 
 OPTS_KEYS = ('maxConnections', 'acceptHandler', 'createSocketHandler')
 

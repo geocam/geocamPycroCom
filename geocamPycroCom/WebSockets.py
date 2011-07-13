@@ -3,7 +3,6 @@ import time
 import uuid
 import struct
 import socket
-import asyncore
 from select import select
 import logging
 from threading import Thread
@@ -12,6 +11,8 @@ import hashlib
 from geocamUtil.JsonRpc2Validation import JsonRpc2Keys
 from geocamUtil.JsonRpc2Validation import JsonRpc2Validator
 from geocamUtil.JsonRpc2Validation import JsonRpc2ComplianceException
+
+from geocamPycroCom import asyncore # patched version
 
 class Resource(Thread):
     def __init__(self, server, rname):

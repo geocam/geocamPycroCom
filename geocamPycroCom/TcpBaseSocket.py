@@ -4,8 +4,9 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import asynchat
 import sys
+
+from geocamPycroCom import asynchat # patched version
 
 class TcpBaseSocket(asynchat.async_chat):
     def __init__(self, protocol, dispatcher):

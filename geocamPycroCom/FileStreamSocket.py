@@ -4,7 +4,9 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import asyncore, sys, traceback, re
+import sys, traceback, re
+
+from geocamPycroCom import asyncore # patched version
 
 OPTS_KEYS = ('lineMode', 'connectHandler', 'lineHandler')
 

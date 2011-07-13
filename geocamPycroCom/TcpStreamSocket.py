@@ -6,8 +6,9 @@
 
 import re, sys, os, socket, time, errno
 import exceptions, traceback
-import asynchat
 from TcpBaseSocket import TcpBaseSocket
+
+from geocamPycroCom import asynchat # patched version
 
 OPTS_KEYS = ('lineMode', 'connectHandler', 'lineHandler')
 

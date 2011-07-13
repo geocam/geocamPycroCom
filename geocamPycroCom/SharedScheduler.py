@@ -4,8 +4,10 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import sched, time, asyncore, sys
+import sched, time, sys
 from printTraceback import printTraceback
+
+from geocamPycroCom import asyncore # patched version
 
 class ExitSchedulerLoop(Exception):
     pass
