@@ -107,7 +107,7 @@ class ResourceManager(Thread):
         self.resources[rname] = resource
 
     def handleIncoming(self, rname, data):
-        logging.debug("ResourceManager: got msg for rname=[%s] msg=[%s]"%(rname, data))
+        logging.info("ResourceManager: got msg for rname=[%s] msg=[%s]"%(rname, data))
         if rname in self.resources:
             self.resources[rname].receive(data)
         else:
@@ -229,11 +229,11 @@ class WebSocket(object):
     def onmessage(self, data):
         logging.info("Got message: [%s]. Passing to resource manager." % data)
         rname = self.associatedResourceName
-        logging.debug("About to pass client msg to resource manager")
+        logging.info("About to pass client msg to resource manager with name=[%s]"%rname)
         self.resourceManager.handleIncoming(rname, data)        
 
     def send(self, data):
-        logging.info("Sent message: %s" % data)
+        #logging.info("Sent message: %s" % data)
         self.client.send("\x00%s\xff" % data)
 
     def close(self):
