@@ -5,13 +5,14 @@
 # __END_LICENSE__
 
 import sys
+import comExceptions
+from comExceptions import BadEndpointError
 import SharedScheduler
-from comExceptions import *
+
 
 class Dispatcher:
-    def __init__(self, moduleName, scheduler = None, period = 0.1):
+    def __init__(self, moduleName, scheduler=None, period=0.1):
         if scheduler == None:
-            import SharedScheduler
             scheduler = SharedScheduler.scheduler
         self._moduleName = moduleName
         self._scheduler = scheduler
@@ -19,6 +20,7 @@ class Dispatcher:
         self._handlers = {}
         self._protocols = {}
         self._polling = False
+        self._handleMessagesTimer = None
 
     def connectToNotificationService(self, notificationService):
         protocol, addr = self._splitProtocol(notificationService)
@@ -45,7 +47,7 @@ class Dispatcher:
 
     def unsubscribe(self, event):
         protocol, eventName = self._splitProtocol(event)
-        protocol.unsubscribe(addr)
+        protocol.unsubscribe(eventName)
         del self._handlers[eventName]
 
     def publish(self, event, data):
@@ -76,7 +78,7 @@ class Dispatcher:
         self._startHandling()
         return sock
 
-    def listen(self, endpoint, maxConnections=1, lineMode=True, acceptHandler=None, 
+    def listen(self, endpoint, maxConnections=1, lineMode=True, acceptHandler=None,
                connectHandler=None, readHandler=None, lineHandler=None, createSocketHandler=None):
         protocol, addr = self._splitProtocol(endpoint)
         sock = protocol.listen(self, addr,
@@ -85,12 +87,14 @@ class Dispatcher:
                                     acceptHandler=acceptHandler,
                                     createSocketHandler=createSocketHandler,
                                     connectHandler=connectHandler,
-                                    readHandler=readHandler, 
+                                    readHandler=readHandler,
                                     lineHandler=lineHandler))
         self._startHandling()
         return sock
 
-    def findServices(self, protoName, announceServices=[], serviceHandler=None):
+    def findServices(self, protoName, announceServices=None, serviceHandler=None):
+        if announceServices == None:
+            announceServices = []
         if ':' in protoName:
             protoName, _ = self._splitProtocol(protoName)
         self.getProtocol(protoName).findServices(announceServices, serviceHandler)
@@ -109,15 +113,15 @@ class Dispatcher:
 
     def _loadProtocol(self, protoName, endpoint):
         if protoName == 'console':
-            protoName = 'file' # alias
-        implName = '%sWrapper' % protoName.capitalize() # e.g. TcpWrapper
-        modName = 'geocamPycroCom.%s' % implName # e.g. geocamPycroCom.tcpWrapper
+            protoName = 'file'  # alias
+        implName = '%sWrapper' % protoName.capitalize()  # e.g. TcpWrapper
+        modName = 'geocamPycroCom.%s' % implName  # e.g. geocamPycroCom.tcpWrapper
         try:
             __import__(modName)
         except ImportError:
             raise BadEndpointError("can't load protocol", endpoint)
         mod = sys.modules[modName]
-        cls = getattr(mod, implName) # e.g. geocamPycroCom.TcpWrapper.TcpWrapper
+        cls = getattr(mod, implName)  # e.g. geocamPycroCom.TcpWrapper.TcpWrapper
         return cls(self, protoName)
 
     def _splitProtocol(self, endpoint):

@@ -4,10 +4,17 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
+# disable bogus pylint warnings about trying to access or set missing class members
+# pylint: disable=E1101,W0201
+
 import simplejson
+
 
 class ServiceFinder(object):
     """Mixin that provides service finding functionality on top of a pub-sub protocol."""
+
+    def __init__(self):
+        pass
 
     def findServices(self, announceServices, serviceHandler):
         self._serviceHandler = serviceHandler
@@ -20,7 +27,7 @@ class ServiceFinder(object):
                 serviceName, serviceEvent = serviceEntry
                 self._announceServices[serviceName] = serviceEvent
         self._startHandling()
-            
+
     def getAllServices(self):
         return self._allServices
 
@@ -40,7 +47,7 @@ class ServiceFinder(object):
             self.publish('polo', self._packMessageString())
 
     def _poloHandler(self, event, data):
-        moduleName, newServices = simplejson.loads(data)
+        _moduleName, newServices = simplejson.loads(data)
         self._handleNewServices(newServices)
 
     def _handleNewServices(self, newServices):

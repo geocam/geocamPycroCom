@@ -8,20 +8,24 @@ import time
 from PubSubBaseSocket import PubSubBaseSocket
 from PubSubStreamSocket import PubSubStreamSocket
 
+# disable bogus pylint warnings about trying to access or set missing class members
+# pylint: disable=E1101,W0201
+
 OPTS_KEYS = ('maxConnections', 'acceptHandler', 'createSocketHandler')
+
 
 class PubSubListenSocket(PubSubBaseSocket):
     def __init__(self, protocol, dispatcher, optsDict):
         super(PubSubListenSocket, self).__init__(protocol, dispatcher)
         for k in OPTS_KEYS:
-            setattr(self, '_'+k, optsDict[k])
+            setattr(self, '_' + k, optsDict[k])
         self._optsDict = optsDict
 
     def listen(self, listenEvent):
         self.endpoint = '%s:%s' % (self._protocol.protoName, listenEvent)
         self._listenEvent = listenEvent
         self._protocol.subscribeWithHandler(self._listenEvent, self._pingHandler)
-        
+
     def _pingHandler(self, name, data):
         cmd, self._acceptSendEvent = data.split()
         assert cmd == 'ping'

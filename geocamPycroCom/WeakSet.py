@@ -6,6 +6,7 @@
 
 from weakref import WeakKeyDictionary
 
+
 class WeakSet(object):
     def __init__(self):
         self._vals = WeakKeyDictionary()
@@ -19,7 +20,7 @@ class WeakSet(object):
     def __iter__(self):
         # try to ensure that the dictionary doesn't change size during
         # iteration by freezing it with the keys() function.
-        self._tmp = self._vals.keys()
+        self._tmp = self._vals.keys()  # pylint: disable=W0201
         for elt in self._tmp:
             yield elt
         del self._tmp

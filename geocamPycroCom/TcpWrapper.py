@@ -4,9 +4,11 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
+import sys
 from TcpStreamSocket import TcpStreamSocket
 from TcpListenSocket import TcpListenSocket
 from WeakSet import WeakSet
+
 
 class TcpWrapper:
     pollForMessages = False
@@ -32,9 +34,9 @@ class TcpWrapper:
         for sock in self._sockets:
             try:
                 sock.close()
-            except:
-                errClass, errObject, errTB = sys.exc_info()[:3]
-                print >>sys.stderr, ('could not close socket -- %s.%s: %s'
-                                     % (errClass.__module__,
-                                        errClass.__name__,
-                                        str(errObject)))
+            except:  # pylint: disable=W0702
+                errClass, errObject, _errTB = sys.exc_info()[:3]
+                print >> sys.stderr, ('could not close socket -- %s.%s: %s'
+                                      % (errClass.__module__,
+                                         errClass.__name__,
+                                         str(errObject)))

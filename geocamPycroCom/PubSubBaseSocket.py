@@ -4,6 +4,7 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
+
 class PubSubBaseSocket(object):
     def __init__(self, protocol, dispatcher):
         self._protocol = protocol

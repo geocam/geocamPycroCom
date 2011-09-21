@@ -4,11 +4,15 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import sched, time, asyncore, sys
+import sched
+import time
+import asyncore
 from printTraceback import printTraceback
+
 
 class ExitSchedulerLoop(Exception):
     pass
+
 
 def asyncoreListenWait(delay):
     if asyncore.socket_map:
@@ -17,6 +21,7 @@ def asyncoreListenWait(delay):
         # asyncore.poll() returns immediately if there are no sockets to watch;
         # avoid busy loop
         time.sleep(delay)
+
 
 class SchedulerPlus(sched.scheduler):
     def __init__(self, timefunc, delayfunc):
@@ -53,11 +58,13 @@ class SchedulerPlus(sched.scheduler):
 
     def enterPeriodic(self, period, action, argument=(), priority=1):
         event = [None]
+
         def _handler(*args):
             #print 'enterPeriodic handler: args=%s' % str(args)
             caughtException = self.runActionCatchExceptions(action, args)
             if not caughtException:
                 event[0] = self.enterSimple(period, _handler, argument, priority)
+
         event[0] = self.enterSimple(period, _handler, argument, priority)
         return event
 
@@ -66,7 +73,6 @@ class SchedulerPlus(sched.scheduler):
 
     def runForever(self):
         try:
-            self._exitNow = False
             while 1:
                 self.run()
                 self.delayfunc(3600)

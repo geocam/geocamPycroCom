@@ -4,20 +4,25 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import re, sys, os, socket, time, errno
-import exceptions, traceback
+# disable bogus pylint warnings about trying to access or set missing class members
+# pylint: disable=E1101,W0201
+
+import re
+import sys
+import socket
+import errno
 import asynchat
 from TcpBaseSocket import TcpBaseSocket
 
 OPTS_KEYS = ('lineMode', 'connectHandler', 'lineHandler')
 
+
 class TcpStreamSocket(TcpBaseSocket):
     def __init__(self, protocol, dispatcher, optsDict):
-        asynchat.async_chat.__init__(self)
         TcpBaseSocket.__init__(self, protocol, dispatcher)
         for k in OPTS_KEYS:
             setattr(self, '_' + k, optsDict[k])
-        assert self._lineMode # wrapper currently only supports line buffering
+        assert self._lineMode  # wrapper currently only supports line buffering
         self._sock = None
 
     def connect(self, serverPort):
@@ -42,19 +47,19 @@ class TcpStreamSocket(TcpBaseSocket):
         self.endpoint = '%s:%s:%s' % (self._protocol._protoName, endpointHostName, hostPort)
         print '\naccepting client connection from %s' % self.endpoint
         self.startup()
-        
+
     def write(self, text):
         try:
             self.send(text)
         except socket.error:
             self.close()
-            raise # let SharedScheduler handle the exception
+            raise  # let SharedScheduler handle the exception
 
     def startup(self):
         self._closed = False
         self._ibuffer = []
         if self._sock != None:
-            self.set_socket(self._sock) # tell asyncore base class about the socket
+            self.set_socket(self._sock)  # tell asyncore base class about the socket
         self.set_terminator('\n')
 
     def handle_connect(self):
@@ -77,10 +82,10 @@ class TcpStreamSocket(TcpBaseSocket):
         self.handleLine(cmd)
 
     def handle_error(self):
-        errClass, errObject, errTB = sys.exc_info()[:3]
+        _errClass, errObject, _errTB = sys.exc_info()[:3]
         if isinstance(errObject, socket.error) and errObject.args[0] == errno.ECONNREFUSED:
-            print >>sys.stderr, 'connection to %s refused' % self.endpoint
+            print >> sys.stderr, 'connection to %s refused' % self.endpoint
             self.abort()
         else:
             self.abort()
-            raise # pass the buck to SharedScheduler error handler
+            raise  # pass the buck to SharedScheduler error handler

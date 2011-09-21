@@ -4,24 +4,35 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import asyncore, sys, traceback, re
+import asyncore
+import sys
+import re
+
+# disable bogus warnings about attributes defined outside __init__
+# pylint: disable=W0201
 
 OPTS_KEYS = ('lineMode', 'connectHandler', 'lineHandler')
 
+
 class FileStreamSocket(asyncore.file_dispatcher):
-    """Implement part of async_chat but on top of asyncore.file_dispatcher instead
+    """
+    Implement part of async_chat but on top of asyncore.file_dispatcher instead
     of asyncore.dispatcher.  Also implement default handlers for simple line-oriented
-    I/O."""
+    I/O.
+    """
+
     def __init__(self, optsDict):
+        # tell pylint we are ok with not calling the parent class constructor
+        # pylint: disable=W0231
         for k in OPTS_KEYS:
             setattr(self, '_' + k, optsDict[k])
-        assert self._lineMode # wrapper only currently supports line buffering
+        assert self._lineMode  # wrapper only currently supports line buffering
 
-    def connect(self):
+    def connect(self):  # pylint: disable=W0221
         inputFd = sys.stdin.fileno()
         self._outputFile = sys.stdout
         asyncore.file_dispatcher.__init__(self, inputFd)
-        self.set_terminator('\n') # default, can change
+        self.set_terminator('\n')  # default, can change
         self._ibuffer = []
 
     def write(self, text):
@@ -52,7 +63,7 @@ class FileStreamSocket(asyncore.file_dispatcher):
         else:
             self.collect_incoming_data(data[:termIndex])
             self.found_terminator()
-            return data[(termIndex+1):]
+            return data[(termIndex + 1):]
 
     def collect_incoming_data(self, data):
         self._ibuffer.append(data)
@@ -62,9 +73,9 @@ class FileStreamSocket(asyncore.file_dispatcher):
         line = re.sub(r'\r$', '', line)
         self.handleLine(line)
         self._ibuffer = []
-    
+
     def handle_error(self):
-        raise # pass the buck to scheduler error handling
+        raise  # pass the buck to scheduler error handling
 
     def handleLine(self, line):
         if self._lineHandler != None:

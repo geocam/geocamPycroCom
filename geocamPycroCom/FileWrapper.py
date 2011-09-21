@@ -6,6 +6,7 @@
 
 from FileStreamSocket import FileStreamSocket
 
+
 class FileWrapper:
     pollForMessages = False
 

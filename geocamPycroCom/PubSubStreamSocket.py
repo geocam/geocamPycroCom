@@ -4,16 +4,24 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import re, platform, os, time
+# disable bogus pylint warnings about trying to access or set missing class members
+# pylint: disable=E1101,W0201
+
+import re
+import platform
+import os
+import time
+
 from PubSubBaseSocket import PubSubBaseSocket
 
 OPTS_KEYS = ('lineMode', 'connectHandler', 'readHandler', 'lineHandler')
+
 
 class PubSubStreamSocket(PubSubBaseSocket):
     def __init__(self, protocol, dispatcher, optsDict):
         super(PubSubStreamSocket, self).__init__(protocol, dispatcher)
         for k in OPTS_KEYS:
-            setattr(self, '_'+k, optsDict[k])
+            setattr(self, '_' + k, optsDict[k])
         self._clear()
 
     def _getUniqueName(self):
@@ -57,7 +65,7 @@ class PubSubStreamSocket(PubSubBaseSocket):
         else:
             line = ''.join(self._recvBuf) + data[:newLineIndex]
             line = re.sub('\r$', '', line)
-            self._recvBuf = [data[(newLineIndex+1):]]
+            self._recvBuf = [data[(newLineIndex + 1):]]
             self.handleLine(line)
 
     def read(self, numBytes=None):
@@ -72,7 +80,7 @@ class PubSubStreamSocket(PubSubBaseSocket):
     def write(self, data):
         self._protocol.publish(self._sendEvent, data)
 
-    push = write # emulate async_chat.push
+    push = write  # emulate async_chat.push
 
     def close(self):
         self._clear()

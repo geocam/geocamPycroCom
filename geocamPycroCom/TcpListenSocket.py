@@ -4,19 +4,26 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import sys, os, socket
+# suppress warnings about unimplemented abstract methods
+# pylint: disable=W0223
+
+import sys
+import socket
 import asynchat
 from TcpBaseSocket import TcpBaseSocket
 from TcpStreamSocket import TcpStreamSocket
-from printTraceback import printTraceback
+
+# disable bogus pylint warnings about trying to access or set missing class members
+# pylint: disable=E1101,W0201
 
 OPTS_KEYS = ('maxConnections', 'acceptHandler', 'createSocketHandler')
+
 
 class TcpListenSocket(TcpBaseSocket):
     def __init__(self, protocol, dispatcher, optsDict):
         TcpBaseSocket.__init__(self, protocol, dispatcher)
         for k in OPTS_KEYS:
-            setattr(self, '_'+k, optsDict[k])
+            setattr(self, '_' + k, optsDict[k])
         self._optsDict = optsDict
 
     def listen(self, listenPort):
@@ -40,7 +47,7 @@ class TcpListenSocket(TcpBaseSocket):
         asynchat.async_chat.listen(self, self._maxConnections)
         print '  called listen'
         sys.stdout.flush()
-    
+
     def handle_accept(self):
         if self._acceptHandler != None:
             self._acceptHandler(self)

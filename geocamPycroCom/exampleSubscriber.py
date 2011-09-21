@@ -4,15 +4,15 @@
 # All Rights Reserved.
 # __END_LICENSE__
 
-import time
 from Dispatcher import Dispatcher
 from SharedScheduler import scheduler
-from exampleConfig import *
+import exampleConfig
+
 
 def fooHandler(name, data):
     print 'got "%s" "%s"' % (name, data)
 
 com = Dispatcher(moduleName='exampleSubscriber')
-com.connectToNotificationService(NOTIFY_ENDPOINT)
-com.subscribe('%s:foo' % PROTOCOL, fooHandler)
+com.connectToNotificationService(exampleConfig.NOTIFY_ENDPOINT)
+com.subscribe('%s:foo' % exampleConfig.PROTOCOL, fooHandler)
 scheduler.runForever()
